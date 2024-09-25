@@ -1,0 +1,56 @@
+name: Nethermind Optimism Plugin Diff
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run every day at midnight UTC
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  diff-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+
+      - name: Cache forkdiff
+        id: cache-forkdiff
+        uses: actions/cache@v3
+        with:
+          path: /usr/local/bin/forkdiff
+          key: ${{ runner.os }}-forkdiff-${{ hashFiles('**/forkdiff/go.sum') }}
+
+      - name: Clone and build forkdiff
+        if: steps.cache-forkdiff.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/protolambda/forkdiff.git
+          cd forkdiff
+          go build -o forkdiff main.go
+          sudo mv forkdiff /usr/local/bin/
+
+      - name: Clone Nethermind repositories
+        run: |
+          git clone --branch master https://github.com/NethermindEth/nethermind.git nethermind-with-op
+          git clone --branch no-op-plugin https://github.com/NethermindEth/nethermind.git nethermind-without-op
+
+      - name: Run forkdiff
+        run: |
+          forkdiff -upstream-repo ./nethermind-without-op -repo ./nethermind-with-op -out index.html
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.name 'github-actions[bot]'
+          git config --local user.email 'github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          current_date=$(date +"%Y-%m-%d")
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update Nethermind Optimism plugin diff - $current_date" && git push)
+
+      - name: Cleanup
+        run: |
+          rm -rf nethermind-with-op nethermind-without-op forkdiff

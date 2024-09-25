@@ -1,0 +1,43 @@
+title: "Nethermind Optimism Plugin Integration"
+logo: "nethermind_logo.png"
+footer: |
+  [Nethermind](https://github.com/NethermindEth/nethermind) Optimism Plugin Integration overview &middot; created with [Forkdiff](https://github.com/protolambda/forkdiff)
+base:
+  name: NethermindEth/nethermind
+  url: https://github.com/NethermindEth/nethermind
+  ref: refs/heads/no-op-plugin
+fork:
+  name: NethermindEth/nethermind
+  url: https://github.com/NethermindEth/nethermind
+  ref: refs/heads/master
+def:
+  title: "Nethermind Optimism Plugin Integration Diff"
+  description: |
+    This diff shows the changes made to integrate the Optimism plugin into Nethermind.
+    The base branch without the Optimism plugin can be found at [`github.com/NethermindEth/nethermind/tree/no-op-plugin`](https://github.com/NethermindEth/nethermind/tree/no-op-plugin).
+    The master branch with the Optimism plugin can be found at [`github.com/NethermindEth/nethermind`](https://github.com/NethermindEth/nethermind/tree/master).
+  globs:
+    - "src/Nethermind/**"
+  sub:
+    - title: "Optimism Plugin"
+      description: "This section shows the addition of the Nethermind.Optimism directory and its contents."
+      globs:
+        - "src/Nethermind/Nethermind.Optimism/**"
+    - title: "Tests for the Optimism Plugin"
+      description: "This section shows the addition of the Nethermind.Optimism.Test directory and its contents."
+      globs:
+        - "src/Nethermind/Nethermind.Optimism.Test/**"
+    - title: "Changes to Nethermind.sln"
+      description: "This section shows the changes made to the Nethermind solution file to add references to Optimism projects."
+      globs:
+        - "src/Nethermind/Nethermind.sln"
+ignore:
+  - "*.dll"
+  - "*.pdb"
+  - "*.cache"
+  - "*.user"
+  - "*.suo"
+  - "*.log"
+  - "bin/**"
+  - "obj/**"
+  - ".github/**"
