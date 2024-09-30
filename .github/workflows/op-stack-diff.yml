@@ -43,7 +43,16 @@ jobs:
         run: |
           forkdiff -upstream-repo ./nethermind-without-op -repo ./nethermind-with-op -out index.html
 
+      - name: Create GitHub App Token
+        id: gh-app
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Commit and push if changed
+        env:
+          GITHUB_TOKEN: ${{ steps.gh-app.outputs.token }}
         run: |
           git config --local user.name 'github-actions[bot]'
           git config --local user.email 'github-actions[bot]@users.noreply.github.com'
